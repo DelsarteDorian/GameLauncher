@@ -89,6 +89,9 @@ games.json
 # Temporary icon extraction
 temp-icons/
 
+# Test scripts (local testing only)
+test-scripts.bat
+
 # Electron application data
 out/
 

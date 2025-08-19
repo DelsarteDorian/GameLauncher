@@ -50,9 +50,26 @@ A modern and elegant game launcher that automatically scans your PC to find and 
    npm install
    ```
 
-3. **Run in development mode**
+3. **Run the application**
+   
+   **Normal mode (silent):**
    ```bash
+   # Using npm
    npm start
+   
+   # Using batch script (Windows - no CMD window)
+   run.bat
+   ```
+   
+   **Debug mode (with logs):**
+   ```bash
+   # Using npm
+   npm run dev
+   
+   # Using batch script (Windows - shows CMD window)
+   run.bat debug
+   # or
+   run-debug.bat
    ```
 
 4. **Build the application**
@@ -175,8 +192,24 @@ case 'indie':
 ### Debug Logs
 Enable logs in development mode:
 ```bash
+# Using npm
 npm run dev
+
+   # Using Windows batch script (CMD)
+   run.bat debug
+   
+   # Using Windows PowerShell
+   .\run.bat debug
+   
+   # Or simply double-click
+   run-debug.bat
 ```
+
+### Windows Users
+For Windows users, we provide convenient batch scripts:
+- **`run.bat`** - Launches the app silently (no CMD window)
+- **`run.bat debug`** (or `.\run.bat debug` in PowerShell) - Launches with debug logs (shows CMD window)
+- **`run-debug.bat`** - Quick shortcut for debug mode
 
 ## 🤝 Contributing
 

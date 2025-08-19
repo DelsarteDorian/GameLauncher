@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0099cc;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="128" cy="128" r="120" fill="url(#gradient)" />
+  
+  <!-- Game controller shape -->
+  <g fill="#ffffff">
+    <!-- Main body -->
+    <rect x="70" y="100" width="116" height="56" rx="28" ry="28"/>
+    
+    <!-- Left grip -->
+    <ellipse cx="85" cy="128" rx="25" ry="35"/>
+    
+    <!-- Right grip -->
+    <ellipse cx="171" cy="128" rx="25" ry="35"/>
+    
+    <!-- D-pad -->
+    <rect x="90" y="115" width="20" height="6" rx="3"/>
+    <rect x="97" y="108" width="6" height="20" rx="3"/>
+    
+    <!-- Action buttons -->
+    <circle cx="155" cy="118" r="6"/>
+    <circle cx="170" cy="118" r="6"/>
+    <circle cx="155" cy="138" r="6"/>
+    <circle cx="170" cy="138" r="6"/>
+    
+    <!-- Center elements -->
+    <rect x="118" y="115" width="20" height="4" rx="2"/>
+    <rect x="118" y="137" width="20" height="4" rx="2"/>
+  </g>
+  
+  <!-- Highlights -->
+  <g fill="#cccccc" opacity="0.7">
+    <circle cx="155" cy="118" r="3"/>
+    <circle cx="170" cy="138" r="3"/>
+    <rect x="92" y="117" width="16" height="2" rx="1"/>
+    <rect x="99" y="110" width="2" height="16" rx="1"/>
+  </g>
+</svg>

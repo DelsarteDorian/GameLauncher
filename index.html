@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Game Launcher</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Barre de titre personnalisée -->
+        <div class="title-bar">
+            <div class="title-bar-content">
+                <div class="app-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="app-title">Multi Game Launcher</div>
+                <div class="window-controls">
+                    <button class="control-btn minimize">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="control-btn maximize">
+                        <i class="fas fa-square"></i>
+                    </button>
+                    <button class="control-btn close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container principal -->
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Bibliothèque</h2>
+                <button class="scan-btn" id="scanBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Scanner
+                </button>
+            </div>
+
+            <div class="sidebar-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="gameCount">0</span>
+                    <span class="stat-label">Jeux</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="lastPlayed">-</span>
+                    <span class="stat-label">Dernier joué</span>
+                </div>
+            </div>
+
+            <div class="sidebar-filters">
+                <h3>Filtres</h3>
+                <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">
+                        <i class="fas fa-gamepad"></i>
+                        Tous les jeux
+                    </button>
+                    <button class="filter-btn" data-filter="recent">
+                        <i class="fas fa-clock"></i>
+                        Récents
+                    </button>
+                    <button class="filter-btn" data-filter="favorites">
+                        <i class="fas fa-star"></i>
+                        Favoris
+                    </button>
+                </div>
+
+                <div class="filter-group">
+                    <h4>Plateformes</h4>
+                    <button class="filter-btn" data-filter="steam">
+                        <i class="fab fa-steam"></i>
+                        Steam
+                    </button>
+                    <button class="filter-btn" data-filter="epic">
+                        <i class="fas fa-store"></i>
+                        Epic Games
+                    </button>
+                    <button class="filter-btn" data-filter="riot">
+                        <i class="fas fa-fist-raised"></i>
+                        Riot Games
+                    </button>
+                    <button class="filter-btn" data-filter="xbox">
+                        <i class="fab fa-xbox"></i>
+                        Xbox Game Pass
+                    </button>
+                    <button class="filter-btn" data-filter="origin">
+                        <i class="fas fa-circle"></i>
+                        EA/Origin
+                    </button>
+                    <button class="filter-btn" data-filter="gog">
+                        <i class="fas fa-compact-disc"></i>
+                        GOG
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Zone principale -->
+        <div class="main-content">
+            <!-- Barre de recherche et contrôles -->
+            <div class="top-bar">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher un jeu..." class="search-input">
+                    <button class="clear-search" id="clearSearch">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="view-controls">
+                    <button class="view-btn active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+
+                <div class="sort-controls">
+                    <select id="sortSelect" class="sort-select">
+                        <option value="name">Nom A-Z</option>
+                        <option value="name-desc">Nom Z-A</option>
+                        <option value="recent">Récemment joué</option>
+                        <option value="playtime">Temps de jeu</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Zone de contenu -->
+            <div class="content-area">
+                <!-- État de chargement -->
+                <div class="loading-state" id="loadingState">
+                    <div class="loading-spinner">
+                        <i class="fas fa-sync-alt fa-spin"></i>
+                    </div>
+                    <p>Recherche des jeux en cours...</p>
+                </div>
+
+                <!-- État vide -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Aucun jeu trouvé</h3>
+                    <p>Cliquez sur "Scanner" pour rechercher les jeux installés sur votre ordinateur.</p>
+                    <button class="primary-btn" id="startScanBtn">
+                        <i class="fas fa-search"></i>
+                        Commencer le scan
+                    </button>
+                </div>
+
+                <!-- Grille de jeux -->
+                <div class="games-grid" id="gamesGrid" style="display: none;">
+                    <!-- Les jeux seront ajoutés dynamiquement ici -->
+                </div>
+
+                <!-- Vue liste -->
+                <div class="games-list" id="gamesList" style="display: none;">
+                    <!-- La liste sera ajoutée dynamiquement ici -->
+                </div>
+            </div>
+        </div>
+        </div> <!-- Fermeture main-container -->
+    </div>
+
+    <!-- Modal pour les détails du jeu -->
+    <div class="modal" id="gameModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalGameName">Nom du jeu</h2>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="game-details">
+                    <div class="game-image">
+                        <img id="modalGameImage" src="" alt="Image du jeu">
+                        <button class="change-image-btn" id="changeImageBtn">
+                            <i class="fas fa-camera"></i>
+                            Changer l'image
+                        </button>
+                        <button class="reset-image-btn" id="resetImageBtn">
+                            <i class="fas fa-undo"></i>
+                            Réinitialiser l'icône
+                        </button>
+                    </div>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <label>Nom:</label>
+                            <input type="text" id="modalGameNameEdit" class="info-input">
+                        </div>
+                        <div class="info-item">
+                            <label>Chemin:</label>
+                            <input type="text" id="modalGamePath" class="info-input" readonly>
+                        </div>
+                        <div class="info-item">
+                            <label>Tags:</label>
+                            <div class="tags-container" id="modalGameTags">
+                                <!-- Tags seront ajoutés ici -->
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <label>
+                                <input type="checkbox" id="modalGameFavorite">
+                                Favori
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" id="modalCancel">Annuler</button>
+                <button class="primary-btn" id="modalSave">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de chargement -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <i class="fas fa-sync-alt fa-spin"></i>
+            </div>
+            <p id="loadingText">Chargement...</p>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

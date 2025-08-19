@@ -3,10 +3,12 @@ const path = require('path');
 const os = require('os');
 const { execSync } = require('child_process');
 const IconExtractor = require('./icon-extractor');
+const SettingsManager = require('./settings-manager');
 
 class GameScanner {
   constructor() {
     this.games = [];
+    this.settingsManager = new SettingsManager();
     this.commonGamePaths = this.getCommonGamePaths();
     this.iconExtractor = new IconExtractor();
   }
@@ -57,14 +59,19 @@ class GameScanner {
     // Generic game directories
     const genericPaths = [
       'C:\\Games',
+      'C:\\game',        // Alternative lowercase path
       'D:\\Games',
+      'D:\\game',
       'E:\\Games',
+      'E:\\game',
       'F:\\Games',
+      'F:\\game',
       'C:\\Program Files\\Games',
       'C:\\Program Files (x86)\\Games',
       'D:\\Program Files\\Games',
       'E:\\Program Files\\Games',
       path.join(homeDir, 'Games'),
+      path.join(homeDir, 'game'),
       path.join(homeDir, 'Documents\\Games'),
       path.join(homeDir, 'AppData\\Local\\Games')
     ];
@@ -77,6 +84,14 @@ class GameScanner {
 
     // Combine all paths for comprehensive scanning
     const allPaths = [...steamPaths, ...epicPaths, ...originPaths, ...gogPaths, ...genericPaths, ...specialPaths];
+    
+    // Add custom paths from settings
+    const customPaths = this.settingsManager.getCustomGamePaths();
+    if (customPaths.length > 0) {
+      console.log(`📁 Custom paths found: ${customPaths.length}`);
+      allPaths.push(...customPaths);
+    }
+    
     return allPaths;
   }
 
@@ -577,6 +592,24 @@ class GameScanner {
       seen.add(key);
       return true;
     });
+  }
+
+  // Custom path management methods
+  addCustomGamePath(customPath) {
+    return this.settingsManager.addCustomGamePath(customPath);
+  }
+
+  removeCustomGamePath(customPath) {
+    return this.settingsManager.removeCustomGamePath(customPath);
+  }
+
+  getCustomGamePaths() {
+    return this.settingsManager.getCustomGamePaths();
+  }
+
+  refreshGamePaths() {
+    this.commonGamePaths = this.getCommonGamePaths();
+    console.log(`🔄 Game paths refreshed. Total paths: ${this.commonGamePaths.length}`);
   }
 }
 

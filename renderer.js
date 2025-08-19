@@ -80,6 +80,21 @@ class GameLauncher {
         document.querySelector('.control-btn.close').addEventListener('click', () => {
             ipcRenderer.send('window-close');
         });
+
+        // Settings modal
+        document.getElementById('settingsBtn').addEventListener('click', () => this.openSettingsModal());
+        document.getElementById('settingsModalClose').addEventListener('click', () => this.closeSettingsModal());
+        document.getElementById('addCustomPathBtn').addEventListener('click', () => this.addCustomPath());
+        document.getElementById('browseFolderBtn').addEventListener('click', () => this.browseFolder());
+        document.getElementById('settingsSaveBtn').addEventListener('click', () => this.saveSettings());
+        document.getElementById('resetSettingsBtn').addEventListener('click', () => this.resetSettings());
+
+        // Fermer la modal des paramètres en cliquant à l'extérieur
+        document.getElementById('settingsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'settingsModal') {
+                this.closeSettingsModal();
+            }
+        });
     }
 
     async loadSavedGames() {
@@ -651,9 +666,182 @@ class GameLauncher {
             }, 300);
         });
     }
+
+    // Settings Modal Methods
+    async openSettingsModal() {
+        try {
+            // Charger les paramètres actuels
+            const settings = await ipcRenderer.invoke('get-settings');
+            const customPaths = await ipcRenderer.invoke('get-custom-paths');
+            
+            // Mettre à jour l'interface
+            this.updateSettingsUI(settings, customPaths);
+            
+            // Afficher le modal
+            document.getElementById('settingsModal').style.display = 'flex';
+        } catch (error) {
+            console.error('Erreur lors de l\'ouverture des paramètres:', error);
+            this.showError('Erreur lors du chargement des paramètres');
+        }
+    }
+
+    closeSettingsModal() {
+        document.getElementById('settingsModal').style.display = 'none';
+    }
+
+    updateSettingsUI(settings, customPaths) {
+        // Mettre à jour les checkboxes
+        document.getElementById('autoScanSetting').checked = settings.autoScan;
+        document.getElementById('showHiddenGamesSetting').checked = settings.showHiddenGames;
+        
+        // Mettre à jour la liste des chemins personnalisés
+        this.renderCustomPathsList(customPaths);
+    }
+
+    renderCustomPathsList(customPaths) {
+        const container = document.getElementById('customPathsList');
+        container.innerHTML = '';
+        
+        if (customPaths.length === 0) {
+            container.innerHTML = '<p style="color: #888; text-align: center; padding: 20px;">Aucun chemin personnalisé ajouté</p>';
+            return;
+        }
+        
+        customPaths.forEach(path => {
+            const pathItem = document.createElement('div');
+            pathItem.className = 'custom-path-item';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-path-btn';
+            removeBtn.innerHTML = '<i class="fas fa-trash"></i>';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeCustomPath(path);
+            });
+            
+            pathItem.innerHTML = `<span class="path-text">${path}</span>`;
+            pathItem.appendChild(removeBtn);
+            container.appendChild(pathItem);
+        });
+    }
+
+    async addCustomPath() {
+        const input = document.getElementById('customPathInput');
+        const customPath = input.value.trim();
+        
+        if (!customPath) {
+            this.showError('Veuillez entrer un chemin valide');
+            return;
+        }
+        
+        // Validation du chemin
+        if (!this.isValidPath(customPath)) {
+            this.showError('Chemin invalide. Utilisez le format Windows (ex: C:\\Games)');
+            return;
+        }
+        
+        // Vérifier si le dossier existe
+        try {
+            const pathExists = await ipcRenderer.invoke('check-path-exists', customPath);
+            if (!pathExists) {
+                this.showError('Ce dossier n\'existe pas. Vérifiez le chemin.');
+                return;
+            }
+        } catch (error) {
+            console.error('Erreur lors de la vérification du chemin:', error);
+        }
+        
+        try {
+            const success = await ipcRenderer.invoke('add-custom-path', customPath);
+            if (success) {
+                this.showSuccess(`Chemin ajouté: ${customPath}`);
+                input.value = '';
+                
+                // Actualiser la liste
+                const customPaths = await ipcRenderer.invoke('get-custom-paths');
+                this.renderCustomPathsList(customPaths);
+            } else {
+                this.showError('Ce chemin existe déjà');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'ajout du chemin:', error);
+            this.showError('Erreur lors de l\'ajout du chemin');
+        }
+    }
+
+    isValidPath(path) {
+        // Validation basique du format Windows
+        const windowsPathRegex = /^[A-Za-z]:\\(?:[^<>:"|?*]+\\)*[^<>:"|?*]*$/;
+        return windowsPathRegex.test(path);
+    }
+
+    async browseFolder() {
+        try {
+            const selectedPath = await ipcRenderer.invoke('select-folder');
+            if (selectedPath) {
+                document.getElementById('customPathInput').value = selectedPath;
+                this.showSuccess('Dossier sélectionné: ' + selectedPath);
+            }
+        } catch (error) {
+            console.error('Erreur lors de la sélection du dossier:', error);
+            this.showError('Erreur lors de la sélection du dossier');
+        }
+    }
+
+    async removeCustomPath(customPath) {
+        try {
+            const success = await ipcRenderer.invoke('remove-custom-path', customPath);
+            if (success) {
+                this.showSuccess(`Chemin supprimé: ${customPath}`);
+                
+                // Actualiser la liste
+                const customPaths = await ipcRenderer.invoke('get-custom-paths');
+                this.renderCustomPathsList(customPaths);
+            } else {
+                this.showError('Erreur lors de la suppression');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la suppression du chemin:', error);
+            this.showError('Erreur lors de la suppression du chemin');
+        }
+    }
+
+    async saveSettings() {
+        try {
+            const autoScan = document.getElementById('autoScanSetting').checked;
+            const showHiddenGames = document.getElementById('showHiddenGamesSetting').checked;
+            
+            await ipcRenderer.invoke('update-setting', 'autoScan', autoScan);
+            await ipcRenderer.invoke('update-setting', 'showHiddenGames', showHiddenGames);
+            
+            this.showSuccess('Paramètres sauvegardés');
+        } catch (error) {
+            console.error('Erreur lors de la sauvegarde des paramètres:', error);
+            this.showError('Erreur lors de la sauvegarde des paramètres');
+        }
+    }
+
+    async resetSettings() {
+        try {
+            const success = await ipcRenderer.invoke('reset-settings');
+            if (success) {
+                this.showSuccess('Paramètres réinitialisés aux valeurs par défaut');
+                
+                // Actualiser l'interface
+                const settings = await ipcRenderer.invoke('get-settings');
+                const customPaths = await ipcRenderer.invoke('get-custom-paths');
+                this.updateSettingsUI(settings, customPaths);
+            } else {
+                this.showError('Erreur lors de la réinitialisation');
+            }
+        } catch (error) {
+            console.error('Erreur lors de la réinitialisation des paramètres:', error);
+            this.showError('Erreur lors de la réinitialisation des paramètres');
+        }
+    }
 }
 
 // Initialiser l'application quand le DOM est chargé
 document.addEventListener('DOMContentLoaded', () => {
-    new GameLauncher();
+    window.gameLauncher = new GameLauncher();
 });

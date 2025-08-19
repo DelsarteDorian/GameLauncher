@@ -2,8 +2,10 @@ const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const SettingsManager = require('./src/settings-manager');
 
 let mainWindow;
+let settingsManager;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -35,7 +37,10 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  settingsManager = new SettingsManager();
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -154,7 +159,58 @@ ipcMain.handle('load-game-data', async () => {
   }
 });
 
-// Contrôles de fenêtre
+// Settings management
+ipcMain.handle('get-settings', async () => {
+  return settingsManager.settings;
+});
+
+ipcMain.handle('add-custom-path', async (event, customPath) => {
+  return settingsManager.addCustomGamePath(customPath);
+});
+
+ipcMain.handle('remove-custom-path', async (event, customPath) => {
+  return settingsManager.removeCustomGamePath(customPath);
+});
+
+ipcMain.handle('get-custom-paths', async () => {
+  return settingsManager.getCustomGamePaths();
+});
+
+ipcMain.handle('update-setting', async (event, key, value) => {
+  return settingsManager.updateSetting(key, value);
+});
+
+ipcMain.handle('reset-settings', async () => {
+  return settingsManager.resetToDefaults();
+});
+
+ipcMain.handle('check-path-exists', async (event, path) => {
+  try {
+    return fs.existsSync(path);
+  } catch (error) {
+    console.error('Error checking path:', error);
+    return false;
+  }
+});
+
+ipcMain.handle('select-folder', async () => {
+  try {
+    const result = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory'],
+      title: 'Sélectionner un dossier de jeux'
+    });
+    
+    if (!result.canceled && result.filePaths.length > 0) {
+      return result.filePaths[0];
+    }
+    return null;
+  } catch (error) {
+    console.error('Error selecting folder:', error);
+    return null;
+  }
+});
+
+// Window controls
 ipcMain.on('window-minimize', () => {
   mainWindow.minimize();
 });

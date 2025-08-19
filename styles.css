@@ -637,6 +637,100 @@ body {
     opacity: 1;
 }
 
+/* Settings Modal Styles */
+.settings-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.settings-section h3 {
+    margin: 0 0 16px 0;
+    color: #00d4ff;
+    font-size: 16px;
+}
+
+.path-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.path-input-group input {
+    flex: 1;
+}
+
+.path-input-group .secondary-btn {
+    padding: 10px 12px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-paths-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.custom-path-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 4px 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+}
+
+.custom-path-item .path-text {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #ccc;
+}
+
+.remove-path-btn {
+    background: rgba(255, 59, 48, 0.8);
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 10px;
+}
+
+.remove-path-btn:hover {
+    background: rgba(255, 59, 48, 1);
+}
+
+.setting-item {
+    margin: 12px 0;
+}
+
+.setting-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.settings-btn {
+    background: rgba(255, 193, 7, 0.8);
+    border: none;
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.settings-btn:hover {
+    background: rgba(255, 193, 7, 1);
+    transform: translateY(-1px);
+}
+
 .game-info {
     flex: 1;
 }

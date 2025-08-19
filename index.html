@@ -98,6 +98,14 @@
                         GOG
                     </button>
                 </div>
+                
+                <div class="filter-group">
+                    <h4>Settings</h4>
+                    <button class="settings-btn" id="settingsBtn">
+                        <i class="fas fa-cog"></i>
+                        Custom Paths
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -218,6 +226,60 @@
             <div class="modal-footer">
                 <button class="secondary-btn" id="modalCancel">Annuler</button>
                 <button class="primary-btn" id="modalSave">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal des paramètres -->
+    <div class="modal" id="settingsModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings - Custom Game Paths</h2>
+                <button class="modal-close" id="settingsModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Add Custom Game Path</h3>
+                    <div class="path-input-group">
+                        <input type="text" id="customPathInput" placeholder="C:\Custom\Games" class="info-input">
+                        <button class="secondary-btn" id="browseFolderBtn" title="Sélectionner un dossier">
+                            <i class="fas fa-folder-open"></i>
+                        </button>
+                        <button class="primary-btn" id="addCustomPathBtn">
+                            <i class="fas fa-plus"></i>
+                            Add Path
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Current Custom Paths</h3>
+                    <div class="custom-paths-list" id="customPathsList">
+                        <!-- Custom paths will be listed here -->
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>Other Settings</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="autoScanSetting">
+                            Auto-scan on startup
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="showHiddenGamesSetting">
+                            Show hidden games
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary-btn" id="resetSettingsBtn">Reset to Defaults</button>
+                <button class="primary-btn" id="settingsSaveBtn">Save Settings</button>
             </div>
         </div>
     </div>
